@@ -12,6 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const outputContainer = document.getElementById('output-container');
     const copyAllBtn = document.getElementById('copy-all-btn');
 
+    // Live Preview Elements
+    const previewSection = document.getElementById('preview-section');
+    const livePreviewFrame = document.getElementById('live-preview-frame');
+    const refreshPreviewBtn = document.getElementById('refresh-preview-btn');
+
     let currentFile = null;
     let latestData = null; // Store latest generated data for copy buttons
 
@@ -85,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Hide previous results if any
             if (!outputContainer.classList.contains('hidden')) {
                 gsap.to(outputContainer, { opacity: 0, y: 10, duration: 0.2 });
+                gsap.to(previewSection, { opacity: 0, y: 10, duration: 0.2 }); // Hide preview
             }
 
             const response = await fetch('/api/generate', {
@@ -117,7 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
         latestData = data; // Store for copying
 
         emptyState.style.display = 'none';
+        emptyState.style.display = 'none';
         outputContainer.classList.remove('hidden');
+        previewSection.classList.remove('hidden'); // Show preview section
 
         // Handle backward compatibility (in case server not restarted)
         const cdns = data.cdns || '';
@@ -134,10 +142,17 @@ document.addEventListener('DOMContentLoaded', () => {
             { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
         );
 
+        gsap.fromTo(previewSection,
+            { opacity: 0, y: 30 },
+            { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.2 }
+        );
+
         // Stagger cards
         gsap.from(".code-card", {
             y: 20, opacity: 0, duration: 0.5, stagger: 0.1, delay: 0.1
         });
+
+        updateLivePreview(data);
     }
 
     // --- Copy Logic ---
@@ -206,6 +221,53 @@ ${js}
                     btnElement.textContent = 'Copy';
                 }
             }, 2000);
+        });
+    }
+
+    function updateLivePreview(data) {
+        if (!livePreviewFrame) return;
+
+        const cdns = data.cdns || '';
+        const markup = data.markup || data.html;
+        const css = data.css;
+        const js = data.js;
+
+        const fullHtml = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview</title>
+    <style>
+        body { margin: 0; padding: 20px; font-family: sans-serif; }
+    </style>
+    ${cdns}
+    <style>
+        ${css}
+    </style>
+</head>
+<body>
+    ${markup}
+    <script>
+        ${js}
+    <\/script>
+</body>
+</html>`;
+
+        const doc = livePreviewFrame.contentWindow.document;
+        doc.open();
+        doc.write(fullHtml);
+        doc.close();
+    }
+
+    if (refreshPreviewBtn) {
+        refreshPreviewBtn.addEventListener('click', () => {
+            if (latestData) {
+                // Add a small animation to show it refreshed
+                gsap.fromTo(livePreviewFrame, { opacity: 0.5 }, { opacity: 1, duration: 0.3 });
+                updateLivePreview(latestData);
+            }
         });
     }
 

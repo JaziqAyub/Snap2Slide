@@ -31,129 +31,157 @@
         <div class="glow glow-3"></div>
     </div>
 
-    <div class="app-layout">
+    <div class="app-container">
+        <div class="app-layout">
 
-        <!-- Sidebar / Upload Area -->
-        <aside class="sidebar">
-            <header>
-                <div class="logo-wrapper">
-                    <div class="logo-icon">✨</div>
-                    <h1 class="logo-text">Snap2Slide</h1>
-                </div>
-                <p class="tagline">Turn screenshots into <span class="highlight">Slick.js</span> code instantly.</p>
-            </header>
-
-            <div class="upload-container">
-                <div class="drop-zone" id="drop-area">
-                    <div class="drop-content">
-                        <div class="upload-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15"
-                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                                <path d="M17 8L12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                                <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                        </div>
-                        <h3>Upload Image</h3>
-                        <p>Drag & drop or click</p>
+            <!-- Sidebar / Upload Area -->
+            <aside class="sidebar">
+                <header>
+                    <div class="logo-wrapper">
+                        <div class="logo-icon">✨</div>
+                        <h1 class="logo-text">Snap2Slide</h1>
                     </div>
-                    <input class="file-input" type="file" id="file-input" accept="image/*">
+                    <p class="tagline">Turn screenshots into <span class="highlight">Slick.js</span> code instantly.</p>
+                </header>
 
-                    <!-- Preview Thumbnail (Overlay) -->
-                    <div class="thumbnail-preview hidden" id="preview-thumbnail">
-                        <img id="image-preview-src" src="" alt="Thumbnail">
-                        <button id="clear-upload" class="icon-btn" title="Remove">
+                <div class="upload-container">
+                    <div class="drop-zone" id="drop-area">
+                        <div class="drop-content">
+                            <div class="upload-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path
+                                        d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <path d="M17 8L12 3L7 8" stroke="currentColor" stroke-width="2"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </div>
+                            <h3>Upload Image</h3>
+                            <p>Drag & drop or click</p>
+                        </div>
+                        <input class="file-input" type="file" id="file-input" accept="image/*">
+
+                        <!-- Preview Thumbnail (Overlay) -->
+                        <div class="thumbnail-preview hidden" id="preview-thumbnail">
+                            <img id="image-preview-src" src="" alt="Thumbnail">
+                            <button id="clear-upload" class="icon-btn" title="Remove">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M18 6L6 18M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button id="generate-btn" class="primary-btn" disabled>
+                        <span class="btn-content">
+                            <span>Generate Code</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
-                                <path d="M18 6L6 18M6 6l12 12" />
+                                <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
-                        </button>
+                        </span>
+                        <div class="loader hidden">
+                            <div class="spinner"></div>
+                        </div>
+                    </button>
+                </div>
+
+                <footer>
+                    <p>Powered by Apexure</p>
+                </footer>
+            </aside>
+
+            <!-- Main Content / Code Output -->
+            <main class="main-content">
+                <div id="empty-state" class="empty-state">
+                    <div class="empty-illustration">
+                        <code>&lt;/&gt;</code>
+                    </div>
+                    <h2>Ready to Generate</h2>
+                    <p>Upload a screenshot to get production-ready HTML, CSS, and JS.</p>
+                </div>
+
+                <div id="output-container" class="output-container hidden">
+                    <div class="results-header">
+                        <h2>Generated Code</h2>
+                        <div class="actions">
+                            <button class="action-btn" id="copy-all-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                                </svg>
+                                Copy All
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Code Block: HTML -->
+                    <div class="code-card">
+                        <div class="card-header">
+                            <span class="lang-tag html">HTML</span>
+                            <button class="copy-btn" data-target="code-html">Copy</button>
+                        </div>
+                        <div class="code-viewport">
+                            <pre><code id="code-html" class="language-html"></code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Code Block: CSS -->
+                    <div class="code-card">
+                        <div class="card-header">
+                            <span class="lang-tag css">CSS</span>
+                            <button class="copy-btn" data-target="code-css">Copy</button>
+                        </div>
+                        <div class="code-viewport">
+                            <pre><code id="code-css" class="language-css"></code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Code Block: JS -->
+                    <div class="code-card">
+                        <div class="card-header">
+                            <span class="lang-tag js">JavaScript</span>
+                            <button class="copy-btn" data-target="code-js">Copy</button>
+                        </div>
+                        <div class="code-viewport">
+                            <pre><code id="code-js" class="language-javascript"></code></pre>
+                        </div>
                     </div>
                 </div>
 
-                <button id="generate-btn" class="primary-btn" disabled>
-                    <span class="btn-content">
-                        <span>Generate Code</span>
+
+
+            </main>
+
+        </div>
+
+        <!-- Live Preview Section -->
+        <div id="preview-section" class="preview-section hidden">
+            <div class="results-header">
+                <h2>Live Preview</h2>
+                <div class="actions">
+                    <button class="action-btn" id="refresh-preview-btn">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2">
-                            <path d="M5 12h14M12 5l7 7-7 7" />
+                            <path d="M23 4v6h-6"></path>
+                            <path d="M1 20v-6h6"></path>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                         </svg>
-                    </span>
-                    <div class="loader hidden">
-                        <div class="spinner"></div>
-                    </div>
-                </button>
-            </div>
-
-            <footer>
-                <p>Powered by Apexure</p>
-            </footer>
-        </aside>
-
-        <!-- Main Content / Code Output -->
-        <main class="main-content">
-            <div id="empty-state" class="empty-state">
-                <div class="empty-illustration">
-                    <code>&lt;/&gt;</code>
-                </div>
-                <h2>Ready to Generate</h2>
-                <p>Upload a screenshot to get production-ready HTML, CSS, and JS.</p>
-            </div>
-
-            <div id="output-container" class="output-container hidden">
-                <div class="results-header">
-                    <h2>Generated Code</h2>
-                    <div class="actions">
-                        <button class="action-btn" id="copy-all-btn">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                            </svg>
-                            Copy All
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Code Block: HTML -->
-                <div class="code-card">
-                    <div class="card-header">
-                        <span class="lang-tag html">HTML</span>
-                        <button class="copy-btn" data-target="code-html">Copy</button>
-                    </div>
-                    <div class="code-viewport">
-                        <pre><code id="code-html" class="language-html"></code></pre>
-                    </div>
-                </div>
-
-                <!-- Code Block: CSS -->
-                <div class="code-card">
-                    <div class="card-header">
-                        <span class="lang-tag css">CSS</span>
-                        <button class="copy-btn" data-target="code-css">Copy</button>
-                    </div>
-                    <div class="code-viewport">
-                        <pre><code id="code-css" class="language-css"></code></pre>
-                    </div>
-                </div>
-
-                <!-- Code Block: JS -->
-                <div class="code-card">
-                    <div class="card-header">
-                        <span class="lang-tag js">JavaScript</span>
-                        <button class="copy-btn" data-target="code-js">Copy</button>
-                    </div>
-                    <div class="code-viewport">
-                        <pre><code id="code-js" class="language-javascript"></code></pre>
-                    </div>
+                        Refresh
+                    </button>
                 </div>
             </div>
-        </main>
+            <div class="preview-container">
+                <iframe id="live-preview-frame" title="Live Preview"></iframe>
+            </div>
+        </div>
+
 
     </div>
 
