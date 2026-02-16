@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const imagePreviewSrc = document.getElementById('image-preview-src');
     const clearUploadBtn = document.getElementById('clear-upload');
     const generateBtn = document.getElementById('generate-btn');
+    const generateFaqBtn = document.getElementById('generate-faq-btn');
     const loader = document.querySelector('.loader');
 
     const emptyState = document.getElementById('empty-state');
@@ -54,6 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentFile = files[0];
             showThumbnail(currentFile);
             generateBtn.disabled = false;
+            if (generateFaqBtn) generateFaqBtn.disabled = false;
         }
     }
 
@@ -74,17 +76,19 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput.value = '';
         previewThumbnail.classList.add('hidden');
         generateBtn.disabled = true;
+        if (generateFaqBtn) generateFaqBtn.disabled = true;
     });
 
     // --- Generate Logic ---
-    generateBtn.addEventListener('click', async (e) => {
-        e.stopPropagation(); // Prevent propagation
+    // --- Generate Logic ---
+    const handleGenerate = async (mode) => {
         if (!currentFile) return;
 
-        setLoading(true);
+        setLoading(true, mode);
 
         const formData = new FormData();
         formData.append('image', currentFile);
+        formData.append('mode', mode);
 
         try {
             // Hide previous results if any
@@ -106,18 +110,44 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             alert('Error: ' + error.message);
         } finally {
-            setLoading(false);
+            setLoading(false, mode);
         }
+    };
+
+    generateBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        handleGenerate('slider');
     });
 
-    function setLoading(isLoading) {
+    if (generateFaqBtn) {
+        generateFaqBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            handleGenerate('faq');
+        });
+    }
+
+    function setLoading(isLoading, mode) {
+        // Disable both buttons during load
         generateBtn.disabled = isLoading;
+        if (generateFaqBtn) generateFaqBtn.disabled = isLoading;
+
+        // Show loader on the active button
+        const activeBtn = mode === 'faq' ? generateFaqBtn : generateBtn;
+        const activeLoader = activeBtn.querySelector('.loader');
+
         if (isLoading) {
-            loader.classList.remove('hidden');
+            if (activeLoader) activeLoader.classList.remove('hidden');
         } else {
-            loader.classList.add('hidden');
+            // Hide all loaders to be safe
+            document.querySelectorAll('.loader').forEach(l => l.classList.add('hidden'));
+            // Re-enable (if file still exists)
+            if (currentFile) {
+                generateBtn.disabled = false;
+                if (generateFaqBtn) generateFaqBtn.disabled = false;
+            }
         }
     }
+
 
     function displayResults(data) {
         latestData = data; // Store for copying

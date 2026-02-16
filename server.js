@@ -41,7 +41,12 @@ app.post('/api/generate', upload.single('image'), async (req, res) => {
     const dataUrl = `data:${req.file.mimetype};base64,${base64Image}`;
     console.log('Data URL prepared.');
 
-    const prompt = `You are an expert web developer specializing in high-fidelity Slick.js sliders. Analyze this screenshot of a UI slider/carousel with extreme attention to visual structure and layout.
+    const mode = req.body.mode || 'slider';
+    console.log(`Generating code for mode: ${mode}`);
+
+    let prompt = '';
+
+    const sliderPrompt = `You are an expert web developer specializing in high-fidelity Slick.js sliders. Analyze this screenshot of a UI slider/carousel with extreme attention to visual structure and layout.
 
 Generate production-ready HTML, CSS, and JavaScript (jQuery + Slick.js) to replicate the design as closely as possible.
 
@@ -106,6 +111,50 @@ Return ONLY valid JSON in this exact schema:
   "js": "string"
 }`;
 
+    const faqPrompt = `You are an expert web developer specializing in high-fidelity FAQ/Accordion components. Analyze this screenshot of an FAQ section with extreme attention to visual structure and layout.
+
+Generate production-ready HTML, CSS, and JavaScript (jQuery) to replicate the design as closely as possible.
+
+Requirements:
+1. Styling Fidelity:
+- Colors: Approximate the dominant visible colors and express them as hex values.
+- Typography: Match font weight hierarchy (bold questions, regular answers).
+- Borders & Shadows: Accurately infer border-radius and styling of accordion items.
+- Spacing: Preserve visual whitespace and padding proportions.
+
+2. Structure & Logic:
+- Generate semantic HTML: .accordion-container, .accordion-item, .accordion-header, .accordion-content.
+- **IMPORTANT**: The icon/arrow must be an <img> tag with class "icon". Use this specific SVG URL for a chevron down: "https://api.iconify.design/lucide:chevron-down.svg".
+    - If one item appears open in the screenshot, make that item open by default (or the first one if unsure).
+- Implement jQuery logic for the accordion effect:
+      - Click on header toggles the content(slideToggle).
+    - Close other open items if appropriate(accordion behavior) or allow multiple open(if proper for the design).
+    - Toggle an 'active' class on the header.
+- **CSS Animation Requirements**:
+    - The ".icon" must have "transition: transform 0.3s ease;".
+    - When the item is active (".accordion-header.active .icon"), apply "transform: rotate(180deg);".
+    - Default state: arrow points down. Active state: arrow points up.
+
+3. Output Rules:
+    - The "markup" field must contain only the accordion container and items.
+- Do not include < html >, <body>, or CDN tags inside markup.
+      - Do not include explanations, markdown, or comments.
+      - Format all HTML, CSS, and JavaScript using clean multi-line formatting.
+
+      Return ONLY valid JSON in this exact schema:
+      {
+        "cdns": "string", // Return jQuery CDN here
+      "markup": "string",
+      "css": "string",
+      "js": "string"
+}`;
+
+    if (mode === 'faq') {
+      prompt = faqPrompt;
+    } else {
+      prompt = sliderPrompt;
+    }
+
     console.log('Prompt prepared. Length:', prompt.length);
     console.log('Initializing OpenAI completion...');
 
@@ -135,11 +184,11 @@ Return ONLY valid JSON in this exact schema:
 
     // Hardcode reliable CDNs
     codeData.cdns = `<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Slick Carousel -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
-<script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>`;
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <!-- Slick Carousel -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
+      <script src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>`;
 
     // Cleanup
     if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
