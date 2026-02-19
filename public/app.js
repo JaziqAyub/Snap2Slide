@@ -183,6 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         updateLivePreview(data);
+        showSuccessPopup();
     }
 
     // --- Copy Logic ---
@@ -290,6 +291,37 @@ ${js}
         doc.write(fullHtml);
         doc.close();
     }
+
+    // --- Success Popup Logic ---
+    const successPopup = document.getElementById('success-popup');
+
+    function showSuccessPopup() {
+        successPopup.classList.remove('hidden');
+        successPopup.classList.remove('fade-out');
+
+        // Dismiss on manual scroll (after small delay to prevent immediate trigger)
+        setTimeout(() => {
+            window.addEventListener('scroll', hideSuccessPopupOnScroll, { once: true });
+        }, 1000);
+    }
+
+    function hideSuccessPopup() {
+        successPopup.classList.add('fade-out');
+        setTimeout(() => {
+            successPopup.classList.add('hidden');
+            successPopup.classList.remove('fade-out');
+        }, 500);
+        window.removeEventListener('scroll', hideSuccessPopupOnScroll);
+    }
+
+    function hideSuccessPopupOnScroll() {
+        hideSuccessPopup();
+    }
+
+    successPopup.addEventListener('click', () => {
+        previewSection.scrollIntoView({ behavior: 'smooth' });
+        hideSuccessPopup();
+    });
 
     if (refreshPreviewBtn) {
         refreshPreviewBtn.addEventListener('click', () => {

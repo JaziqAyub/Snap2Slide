@@ -79,15 +79,15 @@
 
                     <button id="generate-btn" class="primary-btn" disabled>
                         <span class="btn-content">
-                            <span>Generate Code</span>
+                            <span>Generate Slide</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2">
                                 <path d="M5 12h14M12 5l7 7-7 7" />
                             </svg>
+                            <div class="loader hidden">
+                                <div class="spinner"></div>
+                            </div>
                         </span>
-                        <div class="loader hidden">
-                            <div class="spinner"></div>
-                        </div>
                     </button>
 
                     <!-- new FAQ button -->
@@ -99,10 +99,10 @@
                                 stroke-width="2">
                                 <path d="M4 6h16M4 12h16M4 18h8" />
                             </svg>
+                            <div class="loader hidden">
+                                <div class="spinner"></div>
+                            </div>
                         </span>
-                        <div class="loader hidden">
-                            <div class="spinner"></div>
-                        </div>
                     </button>
                 </div>
 
@@ -198,6 +198,14 @@
         </div>
 
 
+    </div>
+
+    <!-- Success Popup -->
+    <div id="success-popup" class="success-popup hidden">
+        <span class="popup-text">Tap to See Live Preview</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
+        </svg>
     </div>
 
     <!-- GSAP -->
